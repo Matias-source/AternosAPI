@@ -1,2 +1,4 @@
+cloudscraper
 requests
+requests_toolbelt
 bs4
