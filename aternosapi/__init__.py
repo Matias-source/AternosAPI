@@ -1,8 +1,9 @@
-import requests
+import cloudscraper
 from bs4 import BeautifulSoup
 
 class AternosAPI():
     def __init__(self, headers, TOKEN):
+        self.scraper = cloudscraper.CloudScraper()
         self.headers = {}
         self.TOKEN = TOKEN
         self.headers['User-Agent'] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0"
@@ -24,8 +25,8 @@ class AternosAPI():
         exit(1)
 
     def GetStatus(self):
-        webserver = requests.get(url='https://aternos.org/server/', headers=self.headers)
-        webdata = BeautifulSoup(webserver.content, 'html.parser')
+        webserver = self.scraper.get(url='https://aternos.org/server/', headers=self.headers)
+        webdata = BeautifulSoup(webserver.text, 'html.parser')
         status = webdata.find('span', class_='statuslabel-label').get_text()
         status = status.strip()
         return status
@@ -39,7 +40,7 @@ class AternosAPI():
             parameters['headstart'] = 0
             parameters['SEC'] = self.SEC
             parameters['TOKEN'] = self.TOKEN
-            startserver = requests.get(url=f"https://aternos.org/panel/ajax/start.php", params=parameters, headers=self.headers)
+            startserver = self.scraper.get(url=f"https://aternos.org/panel/ajax/start.php", params=parameters, headers=self.headers)
             return "Server Started"
 
     def StopServer(self):
@@ -50,12 +51,12 @@ class AternosAPI():
             parameters = {}
             parameters['SEC'] = self.SEC
             parameters['TOKEN'] = self.TOKEN
-            stopserver = requests.get(url=f"https://aternos.org/panel/ajax/stop.php", params=parameters, headers=self.headers)
+            stopserver = self.scraper.get(url=f"https://aternos.org/panel/ajax/stop.php", params=parameters, headers=self.headers)
             return "Server Stopped"
 
     def GetServerInfo(self):
-        ServerInfo = requests.get(url='https://aternos.org/server/', headers=self.headers)
-        ServerInfo = BeautifulSoup(ServerInfo.content, 'html.parser')
+        ServerInfo = self.scraper.get(url='https://aternos.org/server/', headers=self.headers)
+        ServerInfo = BeautifulSoup(ServerInfo.text, 'html.parser')
 
         Software = ServerInfo.find('span', id='software').get_text()
         Software = Software.strip()
